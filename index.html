@@ -38,7 +38,7 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        /* Play Button */
+        /* Play Button (only shows if autoplay fails) */
         #playButton {
             position: absolute;
             top: 50%;
@@ -52,6 +52,7 @@
             border-radius: 10px;
             cursor: pointer;
             box-shadow: 0 0 10px white;
+            display: none; /* Hidden by default */
         }
     </style>
 </head>
@@ -60,12 +61,12 @@
     <div class="message" id="message"></div>
 
     <!-- Background Music -->
-    <audio id="bg-music" loop>
+    <audio id="bg-music" autoplay loop>
         <source src="The Colors of You _ A Soul-Stirring Song of Love and Art.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
-    <!-- Play Button -->
+    <!-- Play Button (Fallback if autoplay is blocked) -->
     <button id="playButton">Play Music</button>
 
     <script>
@@ -90,24 +91,25 @@
         const playButton = document.getElementById("playButton");
         const bgMusic = document.getElementById("bg-music");
 
-        // Function to start music
-        async function startMusic() {
+        // Try to autoplay music on load
+        window.addEventListener("load", async () => {
             try {
                 await bgMusic.play();
-                localStorage.setItem("musicPlayed", "true"); // Store permission
-                playButton.style.display = "none"; // Hide play button
             } catch (error) {
-                console.log("Autoplay failed:", error);
+                console.log("Autoplay blocked: Showing play button.");
+                playButton.style.display = "block"; // Show button if autoplay fails
             }
-        }
+        });
 
-        // Check if music was previously allowed
-        if (localStorage.getItem("musicPlayed") === "true") {
-            startMusic(); // Autoplay on reload
-        } else {
-            playButton.style.display = "block"; // Show play button if first time
-            playButton.addEventListener("click", startMusic);
-        }
+        // Fallback: If autoplay fails, user clicks button to play manually
+        playButton.addEventListener("click", async () => {
+            try {
+                await bgMusic.play();
+                playButton.style.display = "none"; // Hide button after starting music
+            } catch (error) {
+                console.log("Playback failed:", error);
+            }
+        });
 
         displayMessage();
     </script>
