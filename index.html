@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Across Universes</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.imgur.com/1Z5fP2X.png') repeat;
+            animation: moveStars 50s linear infinite;
+        }
+        @keyframes moveStars {
+            from { background-position: 0 0; }
+            to { background-position: -10000px 5000px; }
+        }
+        .message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            text-shadow: 0 0 10px white;
+            animation: fadeIn 3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="message" id="message"></div>
+    <script>
+        const words = [
+            "Lyme, I love you in every conceivable universe...",
+            "Across all time...",
+            "Across all space...",
+            "Through every dimension...",
+            "In every parallel reality...",
+            "Forever and beyond."
+        ];
+        let index = 0;
+        function displayMessage() {
+            if (index < words.length) {
+                document.getElementById("message").innerText = words[index];
+                index++;
+                setTimeout(displayMessage, 3000);
+            }
+        }
+        displayMessage();
+    </script>
+</body>
+</html>
