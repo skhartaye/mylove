@@ -59,13 +59,13 @@
     <div class="stars"></div>
     <div class="message" id="message"></div>
 
-    <!-- Background Music (Initially Paused) -->
+    <!-- Background Music -->
     <audio id="bg-music" loop>
         <source src="The Colors of You _ A Soul-Stirring Song of Love and Art.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
-    <!-- Play Button (For User Interaction) -->
+    <!-- Play Button -->
     <button id="playButton">Play Music</button>
 
     <script>
@@ -78,7 +78,7 @@
             "Forever and beyond."
         ];
         let index = 0;
-        
+
         function displayMessage() {
             if (index < words.length) {
                 document.getElementById("message").innerText = words[index];
@@ -87,15 +87,27 @@
             }
         }
 
-        // Handle Play Button
         const playButton = document.getElementById("playButton");
         const bgMusic = document.getElementById("bg-music");
 
-        playButton.addEventListener("click", function() {
-            bgMusic.play().then(() => {
-                playButton.style.display = "none"; // Hide button after playing
-            }).catch(err => console.log("Autoplay failed:", err));
-        });
+        // Function to start music
+        async function startMusic() {
+            try {
+                await bgMusic.play();
+                localStorage.setItem("musicPlayed", "true"); // Store permission
+                playButton.style.display = "none"; // Hide play button
+            } catch (error) {
+                console.log("Autoplay failed:", error);
+            }
+        }
+
+        // Check if music was previously allowed
+        if (localStorage.getItem("musicPlayed") === "true") {
+            startMusic(); // Autoplay on reload
+        } else {
+            playButton.style.display = "block"; // Show play button if first time
+            playButton.addEventListener("click", startMusic);
+        }
 
         displayMessage();
     </script>
