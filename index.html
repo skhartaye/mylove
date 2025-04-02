@@ -46,8 +46,8 @@
     <div class="stars"></div>
     <div class="message" id="message"></div>
 
-    <!-- Background Music (Autoplays & Loops) -->
-    <audio id="bg-music" autoplay loop>
+    <!-- Background Music -->
+    <audio id="bg-music" loop>
         <source src="The Colors of You _ A Soul-Stirring Song of Love and Art.mp3" type="audio/mpeg">
     </audio>
 
@@ -62,23 +62,34 @@
         ];
         let index = 0;
         const messageElement = document.getElementById("message");
+        const music = document.getElementById("bg-music");
 
         function displayMessage() {
             messageElement.innerText = words[index];
-            messageElement.style.animation = "none"; // Reset animation
-            void messageElement.offsetWidth; // Trigger reflow to restart animation
+            messageElement.style.animation = "none";
+            void messageElement.offsetWidth;
             messageElement.style.animation = "fadeIn 3s ease-in-out";
 
-            index = (index + 1) % words.length; // Loop back to the first message
-            setTimeout(displayMessage, 3000); // Show next message after 3s
+            index = (index + 1) % words.length;
+            setTimeout(displayMessage, 3000);
         }
 
         displayMessage();
 
-        // Ensure music plays even if autoplay is blocked
-        window.addEventListener("load", () => {
-            const music = document.getElementById("bg-music");
-            music.play().catch(error => console.log("Autoplay blocked"));
+        function playMusic() {
+            music.play().catch(() => {
+                console.log("Autoplay blocked, waiting for user interaction.");
+            });
+        }
+
+        // Try playing music on page load
+        window.addEventListener("load", playMusic);
+
+        // If blocked, play when the user clicks anywhere
+        document.addEventListener("click", () => {
+            if (music.paused) {
+                playMusic();
+            }
         });
     </script>
 </body>
