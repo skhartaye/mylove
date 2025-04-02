@@ -33,26 +33,12 @@
             font-size: 2rem;
             text-shadow: 0 0 10px white;
             animation: fadeIn 3s ease-in-out;
+            opacity: 0;
         }
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        /* Play Button (only shows if autoplay fails) */
-        #playButton {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 15px 30px;
-            font-size: 1.5rem;
-            border: none;
-            background: white;
-            color: black;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 0 10px white;
-            display: none; /* Hidden by default */
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
         }
     </style>
 </head>
@@ -60,14 +46,10 @@
     <div class="stars"></div>
     <div class="message" id="message"></div>
 
-    <!-- Background Music -->
+    <!-- Background Music (Autoplays & Loops) -->
     <audio id="bg-music" autoplay loop>
         <source src="The Colors of You _ A Soul-Stirring Song of Love and Art.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
-
-    <!-- Play Button (Fallback if autoplay is blocked) -->
-    <button id="playButton">Play Music</button>
 
     <script>
         const words = [
@@ -79,39 +61,25 @@
             "Forever and beyond."
         ];
         let index = 0;
+        const messageElement = document.getElementById("message");
 
         function displayMessage() {
-            if (index < words.length) {
-                document.getElementById("message").innerText = words[index];
-                index++;
-                setTimeout(displayMessage, 3000);
-            }
+            messageElement.innerText = words[index];
+            messageElement.style.animation = "none"; // Reset animation
+            void messageElement.offsetWidth; // Trigger reflow to restart animation
+            messageElement.style.animation = "fadeIn 3s ease-in-out";
+
+            index = (index + 1) % words.length; // Loop back to the first message
+            setTimeout(displayMessage, 3000); // Show next message after 3s
         }
 
-        const playButton = document.getElementById("playButton");
-        const bgMusic = document.getElementById("bg-music");
-
-        // Try to autoplay music on load
-        window.addEventListener("load", async () => {
-            try {
-                await bgMusic.play();
-            } catch (error) {
-                console.log("Autoplay blocked: Showing play button.");
-                playButton.style.display = "block"; // Show button if autoplay fails
-            }
-        });
-
-        // Fallback: If autoplay fails, user clicks button to play manually
-        playButton.addEventListener("click", async () => {
-            try {
-                await bgMusic.play();
-                playButton.style.display = "none"; // Hide button after starting music
-            } catch (error) {
-                console.log("Playback failed:", error);
-            }
-        });
-
         displayMessage();
+
+        // Ensure music plays even if autoplay is blocked
+        window.addEventListener("load", () => {
+            const music = document.getElementById("bg-music");
+            music.play().catch(error => console.log("Autoplay blocked"));
+        });
     </script>
 </body>
 </html>
